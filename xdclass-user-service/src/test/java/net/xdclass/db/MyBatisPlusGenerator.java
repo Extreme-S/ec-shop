@@ -10,14 +10,6 @@ import com.baomidou.mybatisplus.generator.config.StrategyConfig;
 import com.baomidou.mybatisplus.generator.config.rules.DateType;
 import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 
-/**
- * 小滴课堂,愿景：让技术不再难学
- *
- * @Description
- * @Author 二当家小D
- * @Remark 有问题直接联系我，源码-笔记-技术交流群
- * @Version 1.0
- **/
 public class MyBatisPlusGenerator {
 
     public static void main(String[] args) {
@@ -26,10 +18,10 @@ public class MyBatisPlusGenerator {
         // 是否支持AR模式
         config.setActiveRecord(true)
                 // 作者
-                .setAuthor("二当家小D")
+                .setAuthor("不爱吃鱼的猫丶")
                 // 生成路径，最好使用绝对路径，window路径是不一样的
                 //TODO  TODO  TODO  TODO
-                .setOutputDir("/Users/xdclass/Desktop/demo/src/main/java")
+                .setOutputDir("C:/Users/Administrator/Desktop/demo/src/main/java")
                 // 文件覆盖
                 .setFileOverride(true)
                 // 主键策略
@@ -57,9 +49,9 @@ public class MyBatisPlusGenerator {
         dsConfig.setDbType(DbType.MYSQL)
                 .setDriverName("com.mysql.cj.jdbc.Driver")
                 //TODO  TODO  TODO  TODO
-                .setUrl("jdbc:mysql://127.0.0.1:3306/xdclass_user?useSSL=false")
+                .setUrl("jdbc:mysql://127.0.0.1:3306/ec_user?useSSL=false&serverTimezone=UTC")
                 .setUsername("root")
-                .setPassword("xdclass.net");
+                .setPassword("123456");
 
         //3. 策略配置globalConfiguration中
         StrategyConfig stConfig = new StrategyConfig();
@@ -81,7 +73,7 @@ public class MyBatisPlusGenerator {
 
         //4. 包名策略配置
         PackageConfig pkConfig = new PackageConfig();
-        pkConfig.setParent("net.xdclass")
+        pkConfig.setParent("net.ec_shop")
                 .setMapper("mapper")
                 .setService("service")
                 .setController("controller")
@@ -97,6 +89,6 @@ public class MyBatisPlusGenerator {
 
         //6. 执行操作
         ag.execute();
-        System.out.println("======= 小滴课堂 Done 相关代码生成完毕  ========");
+        System.out.println("======= 相关代码生成完毕  ========");
     }
 }
