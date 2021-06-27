@@ -2,6 +2,7 @@ package net.ec_shop.mapper;
 
 import net.ec_shop.model.AddressDO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
 
 /**
  * <p>
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author 不爱吃鱼的猫丶
  * @since 2021-06-26
  */
+@Repository
 public interface AddressMapper extends BaseMapper<AddressDO> {
 
 }
