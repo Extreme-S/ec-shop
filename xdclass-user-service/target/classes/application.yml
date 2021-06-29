@@ -11,6 +11,11 @@ spring:
     url: jdbc:mysql://127.0.0.1:3306/ec_user?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
+  #redis分布式缓存
+  redis:
+    host: 8.140.36.154
+    password: 123456
+    port: 8000
 
 #配置plus打印sql日志
 mybatis-plus:
