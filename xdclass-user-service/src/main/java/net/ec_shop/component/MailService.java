@@ -1,4 +1,4 @@
-package net.ec_shop.service;
+package net.ec_shop.component;
 
 public interface MailService {
 

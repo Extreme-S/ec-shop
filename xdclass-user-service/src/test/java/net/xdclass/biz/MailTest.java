@@ -2,7 +2,7 @@ package net.xdclass.biz;
 
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.UserApplication;
-import net.ec_shop.service.MailService;
+import net.ec_shop.component.MailService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

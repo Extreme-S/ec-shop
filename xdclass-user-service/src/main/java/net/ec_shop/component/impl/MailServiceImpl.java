@@ -1,7 +1,7 @@
-package net.ec_shop.service.impl;
+package net.ec_shop.component.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.ec_shop.service.MailService;
+import net.ec_shop.component.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
