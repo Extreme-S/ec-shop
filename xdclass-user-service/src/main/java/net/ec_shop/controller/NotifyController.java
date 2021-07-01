@@ -93,7 +93,7 @@ public class NotifyController {
 
         //匹配图形验证码是否一样
         if (captcha != null && cacheCaptcha != null && captcha.equalsIgnoreCase(cacheCaptcha)) {
-            //成功
+            //成功,删除缓存中的图形验证码，以免重复使用
             redisTemplate.delete(key);
             JsonData jsonData = notifyService.sendCode(SendCodeEnum.USER_REGISTER, to);
             return jsonData;
