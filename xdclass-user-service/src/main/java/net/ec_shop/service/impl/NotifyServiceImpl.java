@@ -29,7 +29,7 @@ public class NotifyServiceImpl implements NotifyService {
     /**
      * 验证码的标题
      */
-    private static final String SUBJECT = "小滴课堂验证码";
+    private static final String SUBJECT = "ec-shop验证码";
 
     /**
      * 验证码的内容
@@ -91,8 +91,11 @@ public class NotifyServiceImpl implements NotifyService {
      */
     @Override
     public boolean checkCode(SendCodeEnum sendCodeEnum, String to, String code) {
+
         String cacheKey = String.format(CacheKey.CHECK_CODE_KEY, sendCodeEnum.name(), to);
+
         String cacheValue = redisTemplate.opsForValue().get(cacheKey);
+
         if (StringUtils.isNotBlank(cacheValue)) {
             String cacheCode = cacheValue.split("_")[0];
             if (cacheCode.equals(code)) {

@@ -59,6 +59,7 @@ public class UserServiceImpl implements UserService {
             checkCode = notifyService.checkCode(SendCodeEnum.USER_REGISTER, registerRequest.getMail(), registerRequest.getCode());
         }
 
+        //
         if (!checkCode) {
             return JsonData.buildResult(BizCodeEnum.CODE_ERROR);
         }
@@ -94,13 +95,13 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 校验用户账号唯一
+     * 校验用户账号唯一 TODO
      *
      * @param mail
      * @return
      */
     private boolean checkUnique(String mail) {
-        return false;
+        return true;
     }
 
 
