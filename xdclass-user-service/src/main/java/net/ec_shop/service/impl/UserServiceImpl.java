@@ -112,6 +112,12 @@ public class UserServiceImpl implements UserService {
                 LoginUser loginUser = new LoginUser();
                 BeanUtils.copyProperties(userDO, loginUser);
                 String token = JWTUtil.geneJsonWebToken(loginUser);
+                // accessToken
+                // accessToken的过期时间
+                // UUID生成一个token
+                //String refreshToken = CommonUtil.generateUUID();
+                //redisTemplate.opsForValue().set(refreshToken,"1",1000*60*60*24*30);
+
                 return JsonData.buildSuccess(token);
             } else {
 
