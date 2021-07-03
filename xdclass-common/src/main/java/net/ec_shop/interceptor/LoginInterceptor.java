@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class LoginInterceptor implements HandlerInterceptor {
 
+    public static ThreadLocal<LoginUser> threadLocal = new ThreadLocal<>();
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String accessToken = request.getHeader("token");
@@ -36,17 +38,24 @@ public class LoginInterceptor implements HandlerInterceptor {
             String name = (String) claims.get("name");
             String mail = (String) claims.get("mail");
 
-
-            LoginUser loginUser = new LoginUser();
-            loginUser.setName(name);
-            loginUser.setHeadImg(headImg);
-            loginUser.setId(userId);
-            loginUser.setMail(mail);
+            //@Builder注解 建造者模式
+            LoginUser loginUser = LoginUser
+                    .builder()
+                    .headImg(headImg)
+                    .name(name)
+                    .id(userId)
+                    .mail(mail).build();
+//            loginUser.setName(name);
+//            loginUser.setHeadImg(headImg);
+//            loginUser.setId(userId);
+//            loginUser.setMail(mail);
 
             //通过attribute传递用户信息
             //request.setAttribute("loginUser",loginUser);
 
-            //通过threadLocal传递用户登录信息  TODO
+            //通过threadLocal传递用户登录信息
+            threadLocal.set(loginUser);
+
 
             return true;
 

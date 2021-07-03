@@ -1,21 +1,16 @@
-package net.ec_shop.model;
+package net.ec_shop.vo;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Builder;
 import lombok.Data;
 
 
 @Data
-@Builder
-public class LoginUser {
+public class UserVO {
 
-    /**
-     * 主键
-     */
     private Long id;
 
     /**
-     * 名称
+     * 昵称
      */
     private String name;
 
@@ -26,7 +21,23 @@ public class LoginUser {
     private String headImg;
 
     /**
+     * 用户签名
+     */
+    private String slogan;
+
+    /**
+     * 0表示女，1表示男
+     */
+    private Integer sex;
+
+    /**
+     * 积分
+     */
+    private Integer points;
+
+    /**
      * 邮箱
      */
     private String mail;
+
 }

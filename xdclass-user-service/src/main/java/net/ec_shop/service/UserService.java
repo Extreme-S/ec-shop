@@ -3,6 +3,7 @@ package net.ec_shop.service;
 import net.ec_shop.request.UserLoginRequest;
 import net.ec_shop.request.UserRegisterRequest;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.UserVO;
 
 public interface UserService {
 
@@ -21,4 +22,12 @@ public interface UserService {
      * @return
      */
     JsonData login(UserLoginRequest userLoginRequest);
+
+    /**
+     * 查看用户详情
+     *
+     * @return
+     */
+    UserVO findUserDetail();
+
 }

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.enums.SendCodeEnum;
+import net.ec_shop.interceptor.LoginInterceptor;
 import net.ec_shop.mapper.UserMapper;
 import net.ec_shop.model.LoginUser;
 import net.ec_shop.model.UserDO;
@@ -14,6 +15,7 @@ import net.ec_shop.service.UserService;
 import net.ec_shop.util.CommonUtil;
 import net.ec_shop.util.JWTUtil;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.UserVO;
 import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -109,7 +111,7 @@ public class UserServiceImpl implements UserService {
             String cryptPwd = Md5Crypt.md5Crypt(userLoginRequest.getPwd().getBytes(), userDO.getSecret());
             if (cryptPwd.equals(userDO.getPwd())) {
                 //登录成功,生成token TODO
-                LoginUser loginUser = new LoginUser();
+                LoginUser loginUser = LoginUser.builder().build();
                 BeanUtils.copyProperties(userDO, loginUser);
                 String token = JWTUtil.geneJsonWebToken(loginUser);
                 // accessToken
@@ -129,6 +131,22 @@ public class UserServiceImpl implements UserService {
         }
 
 
+    }
+
+    /**
+     * 查找用户详情
+     *
+     * @return
+     */
+    @Override
+    public UserVO findUserDetail() {
+        LoginUser loginUser = LoginInterceptor.threadLocal.get();
+
+        UserDO userDO = userMapper.selectOne(new QueryWrapper<UserDO>().eq("id", loginUser.getId()));
+
+        UserVO userVO = new UserVO();
+        BeanUtils.copyProperties(userDO, userVO);
+        return userVO;
     }
 
     /**

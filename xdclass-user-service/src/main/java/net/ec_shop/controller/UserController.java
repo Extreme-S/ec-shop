@@ -10,6 +10,7 @@ import net.ec_shop.request.UserRegisterRequest;
 import net.ec_shop.service.FileService;
 import net.ec_shop.service.UserService;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -79,6 +80,21 @@ public class UserController {
 
         return jsonData;
     }
+
+    /**
+     * 用户个人信息查询
+     *
+     * @return
+     */
+    @ApiOperation("个人信息查询")
+    @GetMapping("detail")
+    public JsonData detail() {
+
+        UserVO userVO = userService.findUserDetail();
+
+        return JsonData.buildSuccess(userVO);
+    }
+
 
 //    刷新token的方案
 //    @PostMapping("refresh_token")
