@@ -46,12 +46,12 @@ public class AddressController {
             @ApiParam(value = "地址id", required = true) @PathVariable("address_id")
                     long addressId) {
 
-        AddressDO addressDO = addressService.detail(addressId);
+        AddressVO addressVO = addressService.detail(addressId);
 //        int i = 1 / 0;
 //        if (addressId == 1) {
 //            throw new BizException(-1, "测试自定义异常");
 //        }
-        return JsonData.buildSuccess(addressDO);
+        return addressVO == null ? JsonData.buildResult(BizCodeEnum.ADDRESS_NO_EXITS) : JsonData.buildSuccess(addressVO);
     }
 
     /**

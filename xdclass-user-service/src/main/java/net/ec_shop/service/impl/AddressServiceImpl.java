@@ -28,11 +28,18 @@ public class AddressServiceImpl implements AddressService {
     private AddressMapper addressMapper;
 
     @Override
-    public AddressDO detail(Long id) {
+    public AddressVO detail(Long id) {
+        LoginUser loginUser = LoginInterceptor.threadLocal.get();
 
-        AddressDO addressDO = addressMapper.selectOne(new QueryWrapper<AddressDO>().eq("id", id));
+        AddressDO addressDO = addressMapper.selectOne(new QueryWrapper<AddressDO>().eq("id", id).eq("user_id", loginUser.getId()));
 
-        return addressDO;
+        if (addressDO == null) {
+            return null;
+        }
+        AddressVO addressVO = new AddressVO();
+        BeanUtils.copyProperties(addressDO, addressVO);
+
+        return addressVO;
     }
 
     /**
@@ -78,7 +85,8 @@ public class AddressServiceImpl implements AddressService {
      */
     @Override
     public int del(int addressId) {
-        int rows = addressMapper.delete(new QueryWrapper<AddressDO>().eq("id", addressId));
+        LoginUser loginUser = LoginInterceptor.threadLocal.get();
+        int rows = addressMapper.delete(new QueryWrapper<AddressDO>().eq("id", addressId).eq("user_id", loginUser.getId()));
         return rows;
     }
 

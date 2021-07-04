@@ -15,7 +15,7 @@ public interface AddressService {
      * @param id
      * @return
      */
-    AddressDO detail(Long id);
+    AddressVO detail(Long id);
 
     /**
      * 新增收货地址
