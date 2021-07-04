@@ -4,16 +4,16 @@ package net.ec_shop.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import net.ec_shop.exception.BizException;
+import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.model.AddressDO;
+import net.ec_shop.request.AddressAddReqeust;
 import net.ec_shop.service.AddressService;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.AddressVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 /**
  * <p>
@@ -31,6 +31,15 @@ public class AddressController {
     @Autowired
     private AddressService addressService;
 
+    @ApiOperation("新增收货地址")
+    @PostMapping("add")
+    public JsonData add(@ApiParam("地址对象") @RequestBody AddressAddReqeust addressAddReqeust) {
+
+        addressService.add(addressAddReqeust);
+
+        return JsonData.buildSuccess();
+    }
+
     @ApiOperation("根据id查找地址详情")
     @GetMapping("/find/{address_id}")
     public Object detail(
@@ -39,10 +48,42 @@ public class AddressController {
 
         AddressDO addressDO = addressService.detail(addressId);
 //        int i = 1 / 0;
-        if (addressId == 1) {
-            throw new BizException(-1, "测试自定义异常");
-        }
+//        if (addressId == 1) {
+//            throw new BizException(-1, "测试自定义异常");
+//        }
         return JsonData.buildSuccess(addressDO);
+    }
+
+    /**
+     * 删除指定收货地址
+     *
+     * @param addressId
+     * @return
+     */
+    @ApiOperation("删除指定收货地址")
+    @DeleteMapping("/del/{address_id}")
+    public JsonData del(
+            @ApiParam(value = "地址id", required = true)
+            @PathVariable("address_id") int addressId) {
+
+        int rows = addressService.del(addressId);
+
+        return rows == 1 ? JsonData.buildSuccess() : JsonData.buildResult(BizCodeEnum.ADDRESS_DEL_FAIL);
+    }
+
+
+    /**
+     * 查询用户的全部收货地址
+     *
+     * @return
+     */
+    @ApiOperation("查询用户的全部收货地址")
+    @GetMapping("/list")
+    public JsonData findUserAllAddress() {
+
+        List<AddressVO> list = addressService.listUserAllAddress();
+
+        return JsonData.buildSuccess(list);
     }
 
 }
