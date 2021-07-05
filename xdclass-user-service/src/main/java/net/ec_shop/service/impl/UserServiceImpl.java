@@ -57,8 +57,6 @@ public class UserServiceImpl implements UserService {
         if (StringUtils.isNotBlank(registerRequest.getMail())) {
             checkCode = notifyService.checkCode(SendCodeEnum.USER_REGISTER, registerRequest.getMail(), registerRequest.getCode());
         }
-
-        //
         if (!checkCode) {
             return JsonData.buildResult(BizCodeEnum.CODE_ERROR);
         }
