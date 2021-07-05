@@ -98,20 +98,16 @@ public class CouponServiceImpl implements CouponService {
         couponRecordDO.setCouponId(couponId);
         couponRecordDO.setId(null);
 
-
         //扣减库存  TODO
-        int rows = 1; //couponMapper.reduceStock(couponId);
+        int rows = couponMapper.reduceStock(couponId);
 
         if (rows == 1) {
             //库存扣减成功才保存记录
             couponRecordMapper.insert(couponRecordDO);
-
         } else {
             log.warn("发放优惠券失败:{},用户:{}", couponDO, loginUser);
-
             throw new BizException(BizCodeEnum.COUPON_NO_STOCK);
         }
-
         return JsonData.buildSuccess();
     }
 
