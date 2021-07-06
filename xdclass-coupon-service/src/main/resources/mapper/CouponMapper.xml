@@ -26,7 +26,7 @@
 
     <!--扣减库存-->
     <update id="reduceStock">
-        update coupon set stock=stock-1 where id = #{couponId}
+        update coupon set stock=stock-1 where id = #{couponId} and stock>0
     </update>
 
 </mapper>

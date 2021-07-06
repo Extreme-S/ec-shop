@@ -4,22 +4,27 @@ package net.ec_shop.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.CouponCategoryEnum;
 import net.ec_shop.service.CouponService;
 import net.ec_shop.util.JsonData;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * <p>
  * 前端控制器
  * </p>
  *
- * @author 二当家小D
+ * @author 不爱吃鱼的猫丶
  * @since 2021-02-07
  */
+@Slf4j
 @Api("优惠券模块")
 @RestController
 @RequestMapping("/api/coupon/v1")
@@ -28,6 +33,9 @@ public class CouponController {
 
     @Autowired
     private CouponService couponService;
+
+    @Autowired
+    private RedissonClient redissonClient;
 
 
     @ApiOperation("分页查询优惠券")
@@ -55,6 +63,24 @@ public class CouponController {
 
         return jsonData;
     }
+
+//    @GetMapping("lock")
+//    public JsonData testLock() {
+//        RLock lock = redissonClient.getLock("lock:coupon:1");
+//        //阻塞等待
+//        //lock.lock(10,TimeUnit.MILLISECONDS);
+//        lock.lock();
+//        try {
+//            log.info("加锁成功，处理业务逻辑。。。。。。" + Thread.currentThread().getId());
+//            TimeUnit.SECONDS.sleep(20);
+//        } catch (Exception e) {
+//
+//        } finally {
+//            log.info("解锁成功，其他线程可以进去。。。。。。" + Thread.currentThread().getId());
+//            lock.unlock();
+//        }
+//        return JsonData.buildSuccess();
+//    }
 
 }
 

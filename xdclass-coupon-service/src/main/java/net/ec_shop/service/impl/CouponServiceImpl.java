@@ -77,16 +77,15 @@ public class CouponServiceImpl implements CouponService {
      */
     @Override
     public JsonData addCoupon(long couponId, CouponCategoryEnum category) {
-        LoginUser loginUser = LoginInterceptor.threadLocal.get();
 
+
+        LoginUser loginUser = LoginInterceptor.threadLocal.get();
         CouponDO couponDO = couponMapper.selectOne(new QueryWrapper<CouponDO>()
                 .eq("id", couponId)
                 .eq("category", category.name()));
 
-
         //优惠券是否可以领取
         this.checkCoupon(couponDO, loginUser.getId());
-
 
         //构建领劵记录
         CouponRecordDO couponRecordDO = new CouponRecordDO();
