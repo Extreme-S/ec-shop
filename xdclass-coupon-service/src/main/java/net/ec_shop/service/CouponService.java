@@ -1,6 +1,7 @@
 package net.ec_shop.service;
 
 import net.ec_shop.enums.CouponCategoryEnum;
+import net.ec_shop.request.NewUserCouponRequest;
 import net.ec_shop.util.JsonData;
 
 import java.util.Map;
@@ -24,4 +25,12 @@ public interface CouponService {
      * @return
      */
     JsonData addCoupon(long couponId, CouponCategoryEnum category);
+
+    /**
+     * 新用户注册发放优惠券
+     *
+     * @param newUserCouponRequest
+     * @return
+     */
+    JsonData initNewUserCoupon(NewUserCouponRequest newUserCouponRequest);
 }
