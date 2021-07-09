@@ -24,6 +24,8 @@ import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -81,6 +83,7 @@ public class CouponServiceImpl implements CouponService {
      * @param category
      * @return
      */
+    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
     @Override
     public JsonData addCoupon(long couponId, CouponCategoryEnum category) {
         LoginUser loginUser = LoginInterceptor.threadLocal.get();
@@ -120,18 +123,14 @@ public class CouponServiceImpl implements CouponService {
             if (rows == 1) {
                 //库存扣减成功才保存记录
                 couponRecordMapper.insert(couponRecordDO);
-
             } else {
                 log.warn("发放优惠券失败:{},用户:{}", couponDO, loginUser);
-
                 throw new BizException(BizCodeEnum.COUPON_NO_STOCK);
             }
-
         } finally {
             rLock.unlock();
             log.info("解锁成功");
         }
-
         return JsonData.buildSuccess();
 
     }
