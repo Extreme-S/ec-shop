@@ -6,12 +6,9 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.ec_shop.service.ProductService;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.ProductVO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -42,8 +39,14 @@ public class ProductController {
         Map<String, Object> pageResult = productService.page(page, size);
 
         return JsonData.buildSuccess(pageResult);
+    }
 
+    @ApiOperation("商品详情")
+    @GetMapping("/detail/{product_id}")
+    public JsonData detail(@ApiParam(value = "商品id", required = true) @PathVariable("product_id") long productId) {
 
+        ProductVO productVO = productService.findDetailById(productId);
+        return JsonData.buildSuccess(productVO);
     }
 }
 

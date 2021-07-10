@@ -1,5 +1,7 @@
 package net.ec_shop.service;
 
+import net.ec_shop.vo.ProductVO;
+
 import java.util.Map;
 
 public interface ProductService {
@@ -12,4 +14,12 @@ public interface ProductService {
      * @return
      */
     Map<String, Object> page(int page, int size);
+
+    /**
+     * 根据id找商品详情
+     *
+     * @param productId
+     * @return
+     */
+    ProductVO findDetailById(long productId);
 }
