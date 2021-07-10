@@ -1,4 +1,4 @@
-package net.ec_shop.service.impl;
+package net.ec_shop.service;
 
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;

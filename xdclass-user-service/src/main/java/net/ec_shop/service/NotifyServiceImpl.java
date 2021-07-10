@@ -1,4 +1,4 @@
-package net.ec_shop.service.impl;
+package net.ec_shop.service;
 
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.constant.CacheKey;

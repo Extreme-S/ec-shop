@@ -1,4 +1,4 @@
-package net.ec_shop.service.impl;
+package net.ec_shop.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
