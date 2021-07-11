@@ -1,6 +1,7 @@
 package net.ec_shop.service;
 
 import net.ec_shop.request.CartItemRequest;
+import net.ec_shop.vo.CartVO;
 
 public interface CartService {
 
@@ -15,5 +16,12 @@ public interface CartService {
      * 清空购物车
      */
     void clear();
+
+    /**
+     * 查看我的购物车
+     *
+     * @return
+     */
+    CartVO getMyCart();
 
 }

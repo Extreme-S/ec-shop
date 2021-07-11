@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiParam;
 import net.ec_shop.request.CartItemRequest;
 import net.ec_shop.service.CartService;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.CartVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,9 +33,15 @@ public class CartController {
     @ApiOperation("清空购物车")
     @DeleteMapping("/clear")
     public JsonData cleanMyCart() {
-
         cartService.clear();
         return JsonData.buildSuccess();
+    }
+
+    @ApiOperation("查看我的购物车")
+    @GetMapping("/mycart")
+    public JsonData findMyCart() {
+        CartVO cartVO = cartService.getMyCart();
+        return JsonData.buildSuccess(cartVO);
     }
 
 

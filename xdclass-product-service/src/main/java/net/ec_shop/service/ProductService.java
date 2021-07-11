@@ -2,6 +2,7 @@ package net.ec_shop.service;
 
 import net.ec_shop.vo.ProductVO;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ProductService {
@@ -22,4 +23,12 @@ public interface ProductService {
      * @return
      */
     ProductVO findDetailById(long productId);
+
+    /**
+     * 根据id批量查询商品
+     *
+     * @param productIdList
+     * @return
+     */
+    List<ProductVO> findProductsByIdBatch(List<Long> productIdList);
 }
