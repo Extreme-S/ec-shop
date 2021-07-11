@@ -24,4 +24,18 @@ public interface CartService {
      */
     CartVO getMyCart();
 
+    /**
+     * 删除购物项
+     *
+     * @param productId
+     */
+    void deleteItem(long productId);
+
+    /**
+     * 修改购物车商品数量
+     *
+     * @param cartItemRequest
+     */
+    void changeItemNum(CartItemRequest cartItemRequest);
+
 }
