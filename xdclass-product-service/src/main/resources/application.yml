@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ec_shop-coupon-service
+    name: ec-product-service
   cloud:
     #注册中心地址
     nacos:

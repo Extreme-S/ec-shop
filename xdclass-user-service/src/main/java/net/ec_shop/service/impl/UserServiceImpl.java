@@ -1,13 +1,15 @@
-package net.ec_shop.service;
+package net.ec_shop.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.enums.SendCodeEnum;
+import net.ec_shop.fegin.CouponFeignService;
 import net.ec_shop.interceptor.LoginInterceptor;
 import net.ec_shop.mapper.UserMapper;
 import net.ec_shop.model.LoginUser;
 import net.ec_shop.model.UserDO;
+import net.ec_shop.request.NewUserCouponRequest;
 import net.ec_shop.request.UserLoginRequest;
 import net.ec_shop.request.UserRegisterRequest;
 import net.ec_shop.service.NotifyService;
@@ -20,23 +22,27 @@ import org.apache.commons.codec.digest.Md5Crypt;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
 
-
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    @Autowired
+    private CouponFeignService couponFeignService;
 
     @Autowired
     private NotifyService notifyService;
 
-
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     /**
      * 用户注册
@@ -76,9 +82,9 @@ public class UserServiceImpl implements UserService {
         String cryptPwd = Md5Crypt.md5Crypt(registerRequest.getPwd().getBytes(), userDO.getSecret());
         userDO.setPwd(cryptPwd);
 
-        //账号唯一性检查  TODO
-
+        //账号唯一性检查 794666918@qq.com
         if (checkUnique(userDO.getMail())) {
+
             int rows = userMapper.insert(userDO);
             log.info("rows:{},注册成功:{}", rows, userDO.toString());
 
@@ -155,10 +161,8 @@ public class UserServiceImpl implements UserService {
      */
     private boolean checkUnique(String mail) {
         QueryWrapper<UserDO> queryWrapper = new QueryWrapper<UserDO>().eq("mail", mail);
-
         List<UserDO> list = userMapper.selectList(queryWrapper);
-
-        return list.size() > 0 ? false : true;
+        return list.size() <= 0;
     }
 
 
@@ -168,7 +172,11 @@ public class UserServiceImpl implements UserService {
      * @param userDO
      */
     private void userRegisterInitTask(UserDO userDO) {
-
+        NewUserCouponRequest request = new NewUserCouponRequest();
+        request.setName(userDO.getName());
+        request.setUserId(userDO.getId());
+        JsonData jsonData = couponFeignService.addNewUserCoupon(request);
+        log.info("发放新用户注册优惠券：{},结果:{}", request.toString(), jsonData.toString());
     }
 
 

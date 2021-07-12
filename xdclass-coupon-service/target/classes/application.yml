@@ -1,23 +1,27 @@
 server:
   port: 9002
 
-
 spring:
   application:
-    name: xdclass-coupon-service
+    name: ec-coupon-service
+  cloud:
+    #注册中心地址
+    nacos:
+      discovery:
+        server-addr: 8.140.36.154:8848
 
   #数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/ec_coupon?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://8.140.36.154:3306/ec_coupon?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: lyw123456
 
   #redis分布式缓存配置
   redis:
     host: 8.140.36.154
-    password: 123456
     port: 8000
+    password: 123456
 
 
 #配置plus打印sql日志

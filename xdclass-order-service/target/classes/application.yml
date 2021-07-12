@@ -1,15 +1,19 @@
 server:
   port: 9004
 
-
 spring:
   application:
     name: ec_shop-order-service
+  cloud:
+    #注册中心地址
+    nacos:
+      discovery:
+        server-addr: 8.140.36.154:8848
 
   #数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/ec_order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://8.140.36.154:3306/ec_order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
 

@@ -1,4 +1,4 @@
-package net.ec_shop.service;
+package net.ec_shop.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 

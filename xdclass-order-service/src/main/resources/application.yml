@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ec_shop-order-service
+    name: ec-order-service
   cloud:
     #注册中心地址
     nacos:
@@ -15,7 +15,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://8.140.36.154:3306/ec_order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: lyw123456
 
   #redis分布式缓存配置
   redis:
