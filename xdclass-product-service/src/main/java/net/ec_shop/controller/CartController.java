@@ -24,9 +24,7 @@ public class CartController {
     @ApiOperation("添加到购物车")
     @PostMapping("add")
     public JsonData addToCart(@ApiParam("购物项") @RequestBody CartItemRequest cartItemRequest) {
-
         cartService.addToCart(cartItemRequest);
-
         return JsonData.buildSuccess();
     }
 
