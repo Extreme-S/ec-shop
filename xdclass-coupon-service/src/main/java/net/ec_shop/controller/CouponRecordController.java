@@ -4,6 +4,7 @@ package net.ec_shop.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import net.ec_shop.enums.BizCodeEnum;
+import net.ec_shop.request.LockCouponRecordRequest;
 import net.ec_shop.service.CouponRecordService;
 import net.ec_shop.util.JsonData;
 import net.ec_shop.vo.CouponRecordVO;
@@ -42,8 +43,15 @@ public class CouponRecordController {
     public JsonData getCouponRecordDetail(@ApiParam(value = "记录id") @PathVariable("record_id") long recordId) {
 
         CouponRecordVO couponRecordVO = couponRecordService.findById(recordId);
-
         return couponRecordVO == null ? JsonData.buildResult(BizCodeEnum.COUPON_NO_EXITS) : JsonData.buildSuccess(couponRecordVO);
+    }
+
+    @ApiOperation("rpc-锁定，优惠券记录")
+    @PostMapping("lock_records")
+    public JsonData lockCouponRecords(@ApiParam("锁定优惠券请求对象") @RequestBody LockCouponRecordRequest recordRequest) {
+        JsonData jsonData = couponRecordService.lockCouponRecords(recordRequest);
+
+        return jsonData;
 
     }
 
