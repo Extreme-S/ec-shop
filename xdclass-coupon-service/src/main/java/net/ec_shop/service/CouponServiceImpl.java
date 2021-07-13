@@ -161,7 +161,7 @@ public class CouponServiceImpl implements CouponService {
             this.addCoupon(couponDO.getId(), CouponCategoryEnum.NEW_USER);
 
         }
-
+//        int i = 1 / 0;
         return JsonData.buildSuccess();
     }
 
