@@ -35,11 +35,11 @@ logging:
   level:
     root: INFO
 
-#seata配置
-seata:
-  tx-service-group: ${spring.application.name}-group
-  service:
-    grouplist:
-      xdclass: 8.140.36.154:8091
-    vgroup-mapping:
-      ec-coupon-service-group: xdclass
+##seata配置
+#seata:
+#  tx-service-group: ${spring.application.name}-group
+#  service:
+#    grouplist:
+#      xdclass: 8.140.36.154:8091
+#    vgroup-mapping:
+#      ec-coupon-service-group: xdclass
