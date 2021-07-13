@@ -3,19 +3,30 @@ server:
 
 spring:
   application:
-    name: ec_shop-order-service
+    name: ec-order-service
   cloud:
     #注册中心地址
     nacos:
       discovery:
         server-addr: 8.140.36.154:8848
+  #消息队列
+  rabbitmq:
+    host: 8.140.36.154
+    port: 5672
+    virtual-host: /
+    username: admin
+    password: lyw123456
+    #开启手动确认消息
+    listener:
+      simple:
+        acknowledge-mode: manual
 
   #数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://8.140.36.154:3306/ec_order?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
     username: root
-    password: 123456
+    password: lyw123456
 
   #redis分布式缓存配置
   redis:

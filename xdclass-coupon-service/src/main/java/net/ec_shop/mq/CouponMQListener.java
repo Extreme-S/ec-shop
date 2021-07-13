@@ -19,7 +19,6 @@ import java.io.IOException;
 @RabbitListener(queues = "${mqconfig.coupon_release_queue}")
 public class CouponMQListener {
 
-
     @Autowired
     private CouponRecordService couponRecordService;
 
