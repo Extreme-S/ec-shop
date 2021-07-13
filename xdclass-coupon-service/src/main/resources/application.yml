@@ -54,6 +54,7 @@ logging:
 #      xdclass: 8.140.36.154:8091
 #    vgroup-mapping:
 #      ec-coupon-service-group: xdclass
+
 #自定义消息队列配置，发送锁定库存消息-》延迟exchange-》lock.queue-》死信exchange-》release.queue
 mqconfig:
   #延迟队列，不能被监听消费
