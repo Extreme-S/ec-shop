@@ -1,6 +1,7 @@
 package net.ec_shop.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.enums.SendCodeEnum;
@@ -24,6 +25,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -56,8 +59,9 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
+//    @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
+    @GlobalTransactional
     public JsonData register(UserRegisterRequest registerRequest) {
-
         boolean checkCode = false;
         //校验验证码
         if (StringUtils.isNotBlank(registerRequest.getMail())) {
@@ -87,6 +91,8 @@ public class UserServiceImpl implements UserService {
 
             int rows = userMapper.insert(userDO);
             log.info("rows:{},注册成功:{}", rows, userDO.toString());
+
+//            int i = 1 / 0;
 
             //新用户注册成功，初始化信息，发放福利等 TODO
             userRegisterInitTask(userDO);

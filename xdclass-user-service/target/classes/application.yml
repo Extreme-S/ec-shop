@@ -54,3 +54,12 @@ aliyun:
     access-key-id: LTAI5tFDQhC7XxoXhx9umBRk
     access-key-secret: 4iHFaCmP7Ltl9ud0MCm7Nl8b5hAb9v
     bucketname: ec-1024shop-img
+
+#seata配置
+seata:
+  tx-service-group: ${spring.application.name}-group
+  service:
+    grouplist:
+      xdclass: 8.140.36.154:8091
+    vgroup-mapping:
+      ec-user-service-group: xdclass
