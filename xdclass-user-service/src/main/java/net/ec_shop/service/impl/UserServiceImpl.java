@@ -1,7 +1,7 @@
 package net.ec_shop.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import io.seata.spring.annotation.GlobalTransactional;
+//import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.enums.SendCodeEnum;
