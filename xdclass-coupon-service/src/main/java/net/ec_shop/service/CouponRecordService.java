@@ -1,6 +1,7 @@
 package net.ec_shop.service;
 
 
+import net.ec_shop.model.CouponRecordMessage;
 import net.ec_shop.request.LockCouponRecordRequest;
 import net.ec_shop.util.JsonData;
 import net.ec_shop.vo.CouponRecordVO;
@@ -33,4 +34,12 @@ public interface CouponRecordService {
      * @return
      */
     JsonData lockCouponRecords(LockCouponRecordRequest recordRequest);
+
+    /**
+     * 释放优惠券记录
+     *
+     * @param recordMessage
+     * @return
+     */
+    boolean releaseCouponRecord(CouponRecordMessage recordMessage);
 }
