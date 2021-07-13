@@ -1,9 +1,13 @@
 package net.ec_shop.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import net.ec_shop.mapper.ProductOrderMapper;
+import net.ec_shop.model.ProductOrderDO;
 import net.ec_shop.request.ConfirmOrderRequest;
 import net.ec_shop.service.ProductOrderService;
 import net.ec_shop.util.JsonData;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
@@ -11,14 +15,16 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class ProductOrderServiceImpl implements ProductOrderService {
 
+    @Autowired
+    private ProductOrderMapper productOrderMapper;
 
     /**
      * 防重提交
      * 用户微服务-确认收货地址
      * 商品微服务-获取最新购物项和价格
      * 订单验价
-     *  * 优惠券微服务-获取优惠券
-     *  * 验证价格
+     * * 优惠券微服务-获取优惠券
+     * * 验证价格
      * 锁定优惠券
      * 锁定商品库存
      * 创建订单对象
@@ -32,5 +38,23 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public JsonData confirmOrder(ConfirmOrderRequest orderRequest) {
         return null;
+    }
+
+    /**
+     * 查询订单状态
+     *
+     * @param outTradeNo
+     * @return
+     */
+    @Override
+    public String queryProductOrderState(String outTradeNo) {
+        ProductOrderDO productOrderDO = productOrderMapper.selectOne(new QueryWrapper<ProductOrderDO>().eq("out_trade_no", outTradeNo));
+
+        if (productOrderDO == null) {
+            return "";
+        } else {
+            return productOrderDO.getState();
+        }
+
     }
 }

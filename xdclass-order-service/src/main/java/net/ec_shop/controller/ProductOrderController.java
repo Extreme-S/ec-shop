@@ -5,17 +5,15 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.enums.ClientType;
 import net.ec_shop.enums.ProductOrderPayTypeEnum;
 import net.ec_shop.request.ConfirmOrderRequest;
 import net.ec_shop.service.ProductOrderService;
 import net.ec_shop.util.JsonData;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -33,6 +31,7 @@ import java.io.IOException;
 @RequestMapping("/api/order/v1")
 @Slf4j
 public class ProductOrderController {
+
     @Autowired
     private ProductOrderService orderService;
 
@@ -68,6 +67,21 @@ public class ProductOrderController {
             log.error("创建订单失败{}", jsonData.toString());
 
         }
+    }
+
+    /**
+     * 查询订单状态
+     * <p>
+     * 此接口没有登录拦截，可以增加一个秘钥进行rpc通信
+     *
+     * @param outTradeNo
+     * @return
+     */
+    @ApiOperation("查询订单状态")
+    @GetMapping("query_state")
+    public JsonData queryProductOrderState(@ApiParam("订单号") @RequestParam("out_trade_no") String outTradeNo) {
+        String state = orderService.queryProductOrderState(outTradeNo);
+        return StringUtils.isBlank(state) ? JsonData.buildResult(BizCodeEnum.ORDER_CONFIRM_NOT_EXIST) : JsonData.buildSuccess(state);
     }
 
     private void writeData(HttpServletResponse response, JsonData jsonData) {
