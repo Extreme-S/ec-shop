@@ -11,6 +11,7 @@ public interface CouponFeignService {
 
     /**
      * 新用户注册发放优惠券
+     *
      * @param newUserCouponRequest
      * @return
      */
