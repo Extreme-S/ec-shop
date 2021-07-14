@@ -1,18 +1,20 @@
 package net.ec_shop.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
-import net.ec_shop.enums.BizCodeEnum;
-import net.ec_shop.enums.CouponStateEnum;
+import net.ec_shop.enums.*;
 import net.ec_shop.exception.BizException;
 import net.ec_shop.feign.CouponFeignSerivce;
 import net.ec_shop.feign.ProductFeignService;
 import net.ec_shop.feign.UserFeignService;
 import net.ec_shop.interceptor.LoginInterceptor;
+import net.ec_shop.mapper.ProductOrderItemMapper;
 import net.ec_shop.mapper.ProductOrderMapper;
 import net.ec_shop.model.LoginUser;
 import net.ec_shop.model.ProductOrderDO;
+import net.ec_shop.model.ProductOrderItemDO;
 import net.ec_shop.request.ConfirmOrderRequest;
 import net.ec_shop.request.LockCouponRecordRequest;
 import net.ec_shop.request.LockProductRequest;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +50,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
     @Autowired
     private CouponFeignSerivce couponFeignSerivce;
+
+    @Autowired
+    private ProductOrderItemMapper orderItemMapper;
 
     /**
      * * 防重提交
@@ -97,14 +103,83 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         //锁定库存
         this.lockProductStocks(orderItemList, orderOutTradeNo);
 
+        //创建订单
+        ProductOrderDO productOrderDO = this.saveProductOrder(orderRequest, loginUser, orderOutTradeNo, addressVO);
 
-        //创建订单  TODO
+        //创建订单项
+        this.saveProductOrderItems(orderOutTradeNo, productOrderDO.getId(), orderItemList);
+
+        //发送延迟消息，用于自动关单 TODO
 
 
         //创建支付  TODO
 
 
         return null;
+    }
+
+    /**
+     * 创建订单
+     *
+     * @param orderRequest
+     * @param loginUser
+     * @param orderOutTradeNo
+     * @param addressVO
+     */
+    private ProductOrderDO saveProductOrder(ConfirmOrderRequest orderRequest, LoginUser loginUser, String orderOutTradeNo, ProductOrderAddressVO addressVO) {
+
+        ProductOrderDO productOrderDO = new ProductOrderDO();
+        productOrderDO.setUserId(loginUser.getId());
+        productOrderDO.setHeadImg(loginUser.getHeadImg());
+        productOrderDO.setNickname(loginUser.getName());
+
+        productOrderDO.setOutTradeNo(orderOutTradeNo);
+        productOrderDO.setCreateTime(new Date());
+        productOrderDO.setDel(0);
+        productOrderDO.setOrderType(ProductOrderTypeEnum.DAILY.name());
+
+        //实际支付的价格
+        productOrderDO.setPayAmount(orderRequest.getRealPayAmount());
+
+        //总价，未使用优惠券的价格
+        productOrderDO.setTotalAmount(orderRequest.getTotalAmount());
+        productOrderDO.setState(ProductOrderStateEnum.NEW.name());
+        ProductOrderTypeEnum.valueOf(orderRequest.getPayType()).name();
+        productOrderDO.setPayType(ProductOrderPayTypeEnum.valueOf(orderRequest.getPayType()).name());
+
+        productOrderDO.setReceiverAddress(JSON.toJSONString(addressVO));
+
+        productOrderMapper.insert(productOrderDO);
+
+        return productOrderDO;
+    }
+
+    /**
+     * 新增订单项
+     *
+     * @param orderOutTradeNo
+     * @param orderId
+     * @param orderItemList
+     */
+    private void saveProductOrderItems(String orderOutTradeNo, Long orderId, List<OrderItemVO> orderItemList) {
+        List<ProductOrderItemDO> list = orderItemList.stream().map(
+                obj -> {
+                    ProductOrderItemDO itemDO = new ProductOrderItemDO();
+                    itemDO.setBuyNum(obj.getBuyNum());
+                    itemDO.setProductId(obj.getProductId());
+                    itemDO.setProductImg(obj.getProductImg());
+                    itemDO.setProductName(obj.getProductTitle());
+                    itemDO.setOutTradeNo(orderOutTradeNo);
+                    itemDO.setCreateTime(new Date());
+                    //单价
+                    itemDO.setAmount(obj.getAmount());
+                    //总价
+                    itemDO.setTotalAmount(obj.getTotalAmount());
+                    itemDO.setProductOrderId(orderId);
+                    return itemDO;
+                }
+        ).collect(Collectors.toList());
+        orderItemMapper.insertBatch(list);
     }
 
     /**
@@ -124,7 +199,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         LockProductRequest lockProductRequest = new LockProductRequest();
         lockProductRequest.setOrderOutTradeNo(orderOutTradeNo);
         lockProductRequest.setOrderItemList(itemRequestList);
-        
+
         JsonData jsonData = productFeignService.lockProductStock(lockProductRequest);
         if (jsonData.getCode() != 0) {
             log.error("锁定商品库存失败：{}", lockProductRequest);
