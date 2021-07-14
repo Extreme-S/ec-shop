@@ -4,11 +4,13 @@ server:
 spring:
   application:
     name: ec-order-service
+
   cloud:
     #注册中心地址
     nacos:
       discovery:
         server-addr: 8.140.36.154:8848
+
   #消息队列
   rabbitmq:
     host: 8.140.36.154
@@ -33,6 +35,9 @@ spring:
     host: 8.140.36.154
     password: 123456
     port: 8000
+
+#  main:
+#    allow-bean-definition-overriding: true
 
 
 #配置plus打印sql日志

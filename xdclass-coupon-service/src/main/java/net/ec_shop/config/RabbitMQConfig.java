@@ -18,11 +18,13 @@ import java.util.Map;
 @Data
 public class RabbitMQConfig {
 
+
     /**
      * 交换机
      */
     @Value("${mqconfig.coupon_event_exchange}")
     private String eventExchange;
+
 
     /**
      * 第一个队列  延迟队列，
@@ -36,6 +38,7 @@ public class RabbitMQConfig {
      */
     @Value("${mqconfig.coupon_release_delay_routing_key}")
     private String couponReleaseDelayRoutingKey;
+
 
     /**
      * 第二个队列，被监听恢复库存的队列
@@ -57,6 +60,7 @@ public class RabbitMQConfig {
     @Value("${mqconfig.ttl}")
     private Integer ttl;
 
+
     /**
      * 消息转换器
      *
@@ -66,6 +70,7 @@ public class RabbitMQConfig {
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
+
 
     /**
      * 创建交换机 Topic类型，也可以用dirct路由
@@ -77,6 +82,7 @@ public class RabbitMQConfig {
     public Exchange couponEventExchange() {
         return new TopicExchange(eventExchange, true, false);
     }
+
 
     /**
      * 延迟队列
@@ -92,6 +98,7 @@ public class RabbitMQConfig {
         return new Queue(couponReleaseDelayQueue, true, false, false, args);
     }
 
+
     /**
      * 死信队列，普通队列，用于被监听
      */
@@ -101,6 +108,7 @@ public class RabbitMQConfig {
         return new Queue(couponReleaseQueue, true, false, false);
 
     }
+
 
     /**
      * 第一个队列，即延迟队列的绑定关系建立
@@ -123,6 +131,4 @@ public class RabbitMQConfig {
 
         return new Binding(couponReleaseQueue, Binding.DestinationType.QUEUE, eventExchange, couponReleaseRoutingKey, null);
     }
-
-
 }
