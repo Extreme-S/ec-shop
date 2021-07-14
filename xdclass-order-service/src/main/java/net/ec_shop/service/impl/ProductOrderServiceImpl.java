@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import net.ec_shop.config.RabbitMQConfig;
 import net.ec_shop.enums.*;
 import net.ec_shop.exception.BizException;
 import net.ec_shop.feign.CouponFeignSerivce;
@@ -13,6 +14,7 @@ import net.ec_shop.interceptor.LoginInterceptor;
 import net.ec_shop.mapper.ProductOrderItemMapper;
 import net.ec_shop.mapper.ProductOrderMapper;
 import net.ec_shop.model.LoginUser;
+import net.ec_shop.model.OrderMessage;
 import net.ec_shop.model.ProductOrderDO;
 import net.ec_shop.model.ProductOrderItemDO;
 import net.ec_shop.request.ConfirmOrderRequest;
@@ -25,6 +27,7 @@ import net.ec_shop.util.JsonData;
 import net.ec_shop.vo.CouponRecordVO;
 import net.ec_shop.vo.OrderItemVO;
 import net.ec_shop.vo.ProductOrderAddressVO;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,6 +56,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
     @Autowired
     private ProductOrderItemMapper orderItemMapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private RabbitMQConfig rabbitMQConfig;
 
     /**
      * * 防重提交
@@ -110,7 +119,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         this.saveProductOrderItems(orderOutTradeNo, productOrderDO.getId(), orderItemList);
 
         //发送延迟消息，用于自动关单 TODO
-
+        OrderMessage orderMessage = new OrderMessage();
+        orderMessage.setOutTradeNo(orderOutTradeNo);
+        rabbitTemplate.convertAndSend(rabbitMQConfig.getEventExchange(), rabbitMQConfig.getOrderCloseDelayRoutingKey(), orderMessage);
 
         //创建支付  TODO
 
