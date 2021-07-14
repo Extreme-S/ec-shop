@@ -4,7 +4,9 @@ import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.BizCodeEnum;
+import net.ec_shop.enums.CouponStateEnum;
 import net.ec_shop.exception.BizException;
+import net.ec_shop.feign.CouponFeignSerivce;
 import net.ec_shop.feign.ProductFeignService;
 import net.ec_shop.feign.UserFeignService;
 import net.ec_shop.interceptor.LoginInterceptor;
@@ -15,11 +17,13 @@ import net.ec_shop.request.ConfirmOrderRequest;
 import net.ec_shop.service.ProductOrderService;
 import net.ec_shop.util.CommonUtil;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.CouponRecordVO;
 import net.ec_shop.vo.OrderItemVO;
 import net.ec_shop.vo.ProductOrderAddressVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
@@ -35,6 +39,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
     @Autowired
     private ProductFeignService productFeignService;
+
+    @Autowired
+    private CouponFeignSerivce couponFeignSerivce;
 
     /**
      * * 防重提交
@@ -68,7 +75,8 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         List<Long> productIdList = orderRequest.getProductIdList();
 
         JsonData cartItemDate = productFeignService.confirmOrderCartItem(productIdList);
-        List<OrderItemVO> orderItemList = cartItemDate.getData(new TypeReference<>() {});
+        List<OrderItemVO> orderItemList = cartItemDate.getData(new TypeReference<>() {
+        });
         log.info("获取的商品:{}", orderItemList);
         if (orderItemList == null) {
             //购物车商品不存在
@@ -76,6 +84,88 @@ public class ProductOrderServiceImpl implements ProductOrderService {
         }
 
         return null;
+    }
+
+    /**
+     * 验证价格
+     * 1）统计全部商品的价格
+     * 2) 获取优惠券(判断是否满足优惠券的条件)，总价再减去优惠券的价格 就是 最终的价格
+     *
+     * @param orderItemList
+     * @param orderRequest
+     */
+    private void checkPrice(List<OrderItemVO> orderItemList, ConfirmOrderRequest orderRequest) {
+        //统计商品总价格
+        BigDecimal realPayAmount = new BigDecimal("0");
+        if (orderItemList != null) {
+            for (OrderItemVO orderItemVO : orderItemList) {
+                BigDecimal itemRealPayAmount = orderItemVO.getTotalAmount();
+                realPayAmount = realPayAmount.add(itemRealPayAmount);
+            }
+        }
+        //获取优惠券，判断是否可以使用
+        CouponRecordVO couponRecordVO = getCartCouponRecord(orderRequest.getCouponRecordId());
+        //计算购物车价格，是否满足优惠券满减条件
+        if (couponRecordVO != null) {
+            //计算是否满足满减
+            if (realPayAmount.compareTo(couponRecordVO.getConditionPrice()) < 0) {
+                throw new BizException(BizCodeEnum.ORDER_CONFIRM_COUPON_FAIL);
+            }
+            if (couponRecordVO.getPrice().compareTo(realPayAmount) > 0) {
+                realPayAmount = BigDecimal.ZERO;
+            } else {
+                realPayAmount = realPayAmount.subtract(couponRecordVO.getPrice());
+            }
+        }
+        if (realPayAmount.compareTo(orderRequest.getRealPayAmount()) != 0) {
+            log.error("订单验价失败：{}", orderRequest);
+            throw new BizException(BizCodeEnum.ORDER_CONFIRM_PRICE_FAIL);
+        }
+    }
+
+    /**
+     * 获取优惠券
+     *
+     * @param couponRecordId
+     * @return
+     */
+    private CouponRecordVO getCartCouponRecord(Long couponRecordId) {
+        if (couponRecordId == null || couponRecordId < 0) {
+            return null;
+        }
+        JsonData couponData = couponFeignSerivce.findUserCouponRecordById(couponRecordId);
+        if (couponData.getCode() != 0) {
+            throw new BizException(BizCodeEnum.ORDER_CONFIRM_COUPON_FAIL);
+        }
+        if (couponData.getCode() == 0) {
+            CouponRecordVO couponRecordVO = couponData.getData(new TypeReference<>() {
+            });
+            if (!couponAvailable(couponRecordVO)) {
+                log.error("优惠券使用失败");
+                throw new BizException(BizCodeEnum.COUPON_UNAVAILABLE);
+            }
+            return couponRecordVO;
+        }
+        return null;
+    }
+
+    /**
+     * 判断优惠券是否可用
+     *
+     * @param couponRecordVO
+     * @return
+     */
+    private boolean couponAvailable(CouponRecordVO couponRecordVO) {
+        if (couponRecordVO.getUseState().equalsIgnoreCase(CouponStateEnum.NEW.name())) {
+            long currentTimestamp = CommonUtil.getCurrentTimestamp();
+            long end = couponRecordVO.getEndTime().getTime();
+            long start = couponRecordVO.getStartTime().getTime();
+//            if (currentTimestamp >= start && currentTimestamp <= end) {
+//                return true;
+//            }
+            return currentTimestamp >= start && currentTimestamp <= end;
+        }
+        return false;
     }
 
     /**
