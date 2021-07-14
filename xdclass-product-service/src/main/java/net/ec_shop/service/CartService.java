@@ -1,7 +1,10 @@
 package net.ec_shop.service;
 
 import net.ec_shop.request.CartItemRequest;
+import net.ec_shop.vo.CartItemVO;
 import net.ec_shop.vo.CartVO;
+
+import java.util.List;
 
 public interface CartService {
 
@@ -38,4 +41,10 @@ public interface CartService {
      */
     void changeItemNum(CartItemRequest cartItemRequest);
 
+    /**
+     * 确认购物车商品信息
+     * @param productIdList
+     * @return
+     */
+    List<CartItemVO> confirmOrderCartItems(List<Long> productIdList);
 }

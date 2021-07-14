@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
 import net.ec_shop.enums.BizCodeEnum;
 import net.ec_shop.exception.BizException;
+import net.ec_shop.feign.ProductFeignService;
 import net.ec_shop.feign.UserFeignService;
 import net.ec_shop.interceptor.LoginInterceptor;
 import net.ec_shop.mapper.ProductOrderMapper;
@@ -14,9 +15,12 @@ import net.ec_shop.request.ConfirmOrderRequest;
 import net.ec_shop.service.ProductOrderService;
 import net.ec_shop.util.CommonUtil;
 import net.ec_shop.util.JsonData;
+import net.ec_shop.vo.OrderItemVO;
 import net.ec_shop.vo.ProductOrderAddressVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -28,6 +32,9 @@ public class ProductOrderServiceImpl implements ProductOrderService {
 
     @Autowired
     private UserFeignService userFeignService;
+
+    @Autowired
+    private ProductFeignService productFeignService;
 
     /**
      * * 防重提交
@@ -48,14 +55,25 @@ public class ProductOrderServiceImpl implements ProductOrderService {
      */
     @Override
     public JsonData confirmOrder(ConfirmOrderRequest orderRequest) {
-
         LoginUser loginUser = LoginInterceptor.threadLocal.get();
 
         String orderOutTradeNo = CommonUtil.getStringNumRandom(32);
 
+        //获取收货地址详情
         ProductOrderAddressVO addressVO = this.getUserAddress(orderRequest.getAddressId());
 
         log.info("收货地址信息:{}", addressVO);
+
+        //获取用户加入购物车的商品
+        List<Long> productIdList = orderRequest.getProductIdList();
+
+        JsonData cartItemDate = productFeignService.confirmOrderCartItem(productIdList);
+        List<OrderItemVO> orderItemList = cartItemDate.getData(new TypeReference<>() {});
+        log.info("获取的商品:{}", orderItemList);
+        if (orderItemList == null) {
+            //购物车商品不存在
+            throw new BizException(BizCodeEnum.ORDER_CONFIRM_CART_ITEM_NOT_EXIST);
+        }
 
         return null;
     }
