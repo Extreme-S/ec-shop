@@ -28,31 +28,45 @@ public class CouponRecordController {
     @Autowired
     private CouponRecordService couponRecordService;
 
-
+    /**
+     * 分页查询登录用户的优惠券列表
+     *
+     * @param page
+     * @param size
+     * @return
+     */
     @ApiOperation("分页查询个人优惠券")
     @GetMapping("page")
     public JsonData page(@ApiParam(value = "当前页") @RequestParam(value = "page", defaultValue = "1") int page,
                          @ApiParam(value = "每页显示多少条") @RequestParam(value = "size", defaultValue = "10") int size) {
-
         Map<String, Object> pageResult = couponRecordService.page(page, size);
         return JsonData.buildSuccess(pageResult);
     }
 
+    /**
+     * 查询优惠券详情
+     *
+     * @param recordId
+     * @return
+     */
     @ApiOperation("查询优惠券记录详情")
     @GetMapping("detail/{record_id}")
     public JsonData getCouponRecordDetail(@ApiParam(value = "记录id") @PathVariable("record_id") long recordId) {
-
         CouponRecordVO couponRecordVO = couponRecordService.findById(recordId);
         return couponRecordVO == null ? JsonData.buildResult(BizCodeEnum.COUPON_NO_EXITS) : JsonData.buildSuccess(couponRecordVO);
     }
 
+    /**
+     * 锁定用户优惠券
+     *
+     * @param recordRequest
+     * @return
+     */
     @ApiOperation("rpc-锁定，优惠券记录")
     @PostMapping("lock_records")
     public JsonData lockCouponRecords(@ApiParam("锁定优惠券请求对象") @RequestBody LockCouponRecordRequest recordRequest) {
         JsonData jsonData = couponRecordService.lockCouponRecords(recordRequest);
-
         return jsonData;
-
     }
 
 }

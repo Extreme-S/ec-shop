@@ -19,10 +19,8 @@ import java.util.List;
 @RequestMapping("/api/cart/v1")
 public class CartController {
 
-
     @Autowired
     private CartService cartService;
-
 
     @ApiOperation("添加到购物车")
     @PostMapping("add")
@@ -60,7 +58,8 @@ public class CartController {
     }
 
     /**
-     * 用于订单服务，确认订单，获取对应的商品项详情信息
+     * RPC调用接口—获取对应的商品项详情信息
+     * 用于订单服务，确认订单，
      * 会清空购物车的商品数据
      *
      * @param productIdList
@@ -71,7 +70,6 @@ public class CartController {
     public JsonData confirmOrderCartItems(@ApiParam("商品id列表") @RequestBody List<Long> productIdList) {
         List<CartItemVO> cartItemVOList = cartService.confirmOrderCartItems(productIdList);
         return JsonData.buildSuccess(cartItemVOList);
-
     }
 
 

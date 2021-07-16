@@ -6,7 +6,7 @@ import net.ec_shop.util.JsonData;
 public interface NotifyService {
 
     /**
-     * 发送验证码
+     * 发送邮件验证码
      *
      * @param sendCodeEnum
      * @param to

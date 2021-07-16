@@ -108,7 +108,7 @@ public class CommonUtil {
     }
 
     /**
-     * 生成uuid
+     * 随机生成32位UUID
      *
      * @return
      */

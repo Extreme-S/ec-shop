@@ -19,9 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * <p>
  * 前端控制器
- * </p>
  *
  * @author 不爱吃鱼的猫丶
  * @since 2021-06-26
@@ -49,7 +47,6 @@ public class UserController {
     public JsonData uploadUserImg(
             @ApiParam(value = "文件上传", required = true)
             @RequestPart("file") MultipartFile file) {
-
         String result = fileService.uploadUserImg(file);
         return result != null ? JsonData.buildSuccess(result) : JsonData.buildResult(BizCodeEnum.FILE_UPLOAD_USER_IMG_FAIL);
     }
@@ -75,9 +72,7 @@ public class UserController {
     @ApiOperation("用户登录")
     @PostMapping("login")
     public JsonData login(@ApiParam("用户登录对象") @RequestBody UserLoginRequest userLoginRequest) {
-
         JsonData jsonData = userService.login(userLoginRequest);
-
         return jsonData;
     }
 
@@ -89,9 +84,7 @@ public class UserController {
     @ApiOperation("个人信息查询")
     @GetMapping("detail")
     public JsonData detail() {
-
         UserVO userVO = userService.findUserDetail();
-
         return JsonData.buildSuccess(userVO);
     }
 

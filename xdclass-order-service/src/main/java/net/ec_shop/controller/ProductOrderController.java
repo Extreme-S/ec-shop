@@ -35,33 +35,33 @@ public class ProductOrderController {
     @Autowired
     private ProductOrderService orderService;
 
+    /**
+     * 提交订单
+     *
+     * @param orderRequest
+     * @param response
+     */
     @ApiOperation("提交订单")
     @PostMapping("confirm")
     public void confirmOrder(@ApiParam("订单对象") @RequestBody ConfirmOrderRequest orderRequest, HttpServletResponse response) {
-
         JsonData jsonData = orderService.confirmOrder(orderRequest);
-
         if (jsonData.getCode() == 0) {
-
+            //获取端类型
             String client = orderRequest.getClientType();
+            //获取支付方式
             String payType = orderRequest.getPayType();
-
             //如果是支付宝网页支付，都是跳转网页，APP除外
             if (payType.equalsIgnoreCase(ProductOrderPayTypeEnum.ALIPAY.name())) {
-
                 log.info("创建支付宝订单成功:{}", orderRequest.toString());
-
                 if (client.equalsIgnoreCase(ClientType.H5.name())) {
                     //网页端支付
                     writeData(response, jsonData);
                 } else if (client.equalsIgnoreCase(ClientType.APP.name())) {
                     //APP SDK支付  TODO
                 }
-
             } else if (payType.equalsIgnoreCase(ProductOrderPayTypeEnum.WECHAT.name())) {
                 //微信支付 TODO
             }
-
         } else {
 
             log.error("创建订单失败{}", jsonData.toString());
@@ -71,7 +71,6 @@ public class ProductOrderController {
 
     /**
      * 查询订单状态
-     * <p>
      * 此接口没有登录拦截，可以增加一个秘钥进行rpc通信
      *
      * @param outTradeNo
@@ -93,7 +92,6 @@ public class ProductOrderController {
         } catch (IOException e) {
             log.error("写出Html异常：{}", e);
         }
-
     }
 }
 

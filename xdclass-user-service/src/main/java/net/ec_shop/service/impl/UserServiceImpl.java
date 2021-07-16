@@ -71,30 +71,28 @@ public class UserServiceImpl implements UserService {
             return JsonData.buildResult(BizCodeEnum.CODE_ERROR);
         }
 
+        //生成用户信息
         UserDO userDO = new UserDO();
         BeanUtils.copyProperties(registerRequest, userDO);
-
         userDO.setCreateTime(new Date());
         userDO.setSlogan("人生需要动态规划，学习需要贪心算法");
 
-        //设置密码 TODO
+        //设置密码
         //userDO.setPwd(registerRequest.getPwd());
 
+        //md5+盐方式 加密用户密码
         userDO.setSecret("$1$" + CommonUtil.getStringNumRandom(8));
-
-        //密码+盐处理
         String cryptPwd = Md5Crypt.md5Crypt(registerRequest.getPwd().getBytes(), userDO.getSecret());
         userDO.setPwd(cryptPwd);
 
-        //账号唯一性检查 794666918@qq.com
+        //邮箱账号唯一性检查 1716224950@qq.com
         if (checkUnique(userDO.getMail())) {
-
             int rows = userMapper.insert(userDO);
             log.info("rows:{},注册成功:{}", rows, userDO.toString());
 
 //            int i = 1 / 0;
 
-            //新用户注册成功，初始化信息，发放福利等 TODO
+            //新用户注册成功，初始化信息，发放福利等
             userRegisterInitTask(userDO);
             return JsonData.buildSuccess();
         } else {

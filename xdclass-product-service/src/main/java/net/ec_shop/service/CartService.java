@@ -43,6 +43,7 @@ public interface CartService {
 
     /**
      * 确认购物车商品信息
+     *
      * @param productIdList
      * @return
      */

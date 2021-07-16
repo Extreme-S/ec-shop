@@ -24,16 +24,15 @@ public class FileServiceImpl implements FileService {
     @Autowired
     private OSSConfig ossConfig;
 
-
     @Override
     public String uploadUserImg(MultipartFile file) {
-
         //获取相关配置
         String bucketname = ossConfig.getBucketname();
         String endpoint = ossConfig.getEndpoint();
         String accessKeyId = ossConfig.getAccessKeyId();
         String accessKeySecret = ossConfig.getAccessKeySecret();
-        //创建OSS对象
+
+        //创建OSS客户端对象
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
 
         //获取原生文件名  xxx.jpg
@@ -55,16 +54,14 @@ public class FileServiceImpl implements FileService {
             PutObjectResult putObjectResult = ossClient.putObject(bucketname, newFileName, file.getInputStream());
             //拼装返回路径
             if (putObjectResult != null) {
-                String imgUrl = "https://" + bucketname + "." + endpoint + "/" + newFileName;
-                return imgUrl;
+                return "https://" + bucketname + "." + endpoint + "/" + newFileName;
             }
         } catch (IOException e) {
             log.error("文件上传失败:{}", e);
         } finally {
-            //oss关闭服务，不然会造成OOM
+            //记得关闭oss客户端连接，不然可能会造成OOM
             ossClient.shutdown();
         }
-
         return null;
     }
 }

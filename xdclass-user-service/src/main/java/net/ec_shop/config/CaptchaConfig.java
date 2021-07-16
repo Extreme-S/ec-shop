@@ -30,12 +30,16 @@ public class CaptchaConfig {
         //验证码个数
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_LENGTH, "4");
 //		properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_FONT_NAMES, "Courier");
+
         //字体间隔
         properties.setProperty(Constants.KAPTCHA_TEXTPRODUCER_CHAR_SPACE, "8");
+
         //干扰线颜色
 //		properties.setProperty(Constants.KAPTCHA_NOISE_COLOR, "white");
+
         //干扰实现类
         properties.setProperty(Constants.KAPTCHA_NOISE_IMPL, "com.google.code.kaptcha.impl.NoNoise");
+
         //图片样式
         properties.setProperty(Constants.KAPTCHA_OBSCURIFICATOR_IMPL, "com.google.code.kaptcha.impl.WaterRipple");
 
@@ -44,7 +48,6 @@ public class CaptchaConfig {
         Config config = new Config(properties);
         kaptcha.setConfig(config);
         return kaptcha;
-
     }
 
 

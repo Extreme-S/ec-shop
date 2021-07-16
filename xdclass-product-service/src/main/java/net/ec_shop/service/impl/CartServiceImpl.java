@@ -108,11 +108,8 @@ public class CartServiceImpl implements CartService {
      */
     @Override
     public void deleteItem(long productId) {
-
         BoundHashOperations<String, Object, Object> mycart = getMyCartOps();
-
         mycart.delete(productId);
-
     }
 
     /**
@@ -138,17 +135,16 @@ public class CartServiceImpl implements CartService {
     }
 
     /**
-     * 确认购物车商品信息
+     * 确认购物车商品信息，总价等
+     * 删除redis中该用户购物车的对应购物项
      *
      * @param productIdList
      * @return
      */
     @Override
     public List<CartItemVO> confirmOrderCartItems(List<Long> productIdList) {
-
-        //获取全部购物车的购物项
+        //获取购物车的全部购物项
         List<CartItemVO> cartItemVOList = buildCartItem(true);
-
         //根据需要的商品id进行过滤，并清空对应的购物项
         List<CartItemVO> resultList = cartItemVOList.stream().filter(obj -> {
             if (productIdList.contains(obj.getProductId())) {

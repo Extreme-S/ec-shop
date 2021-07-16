@@ -12,7 +12,6 @@ public class ConfirmOrderRequest {
 
     /**
      * 购物车使用的优惠券，集满减劵
-     * <p>
      * 注意：如果传空或者小于0,则不用优惠券
      */
     @JsonProperty("coupon_record_id")

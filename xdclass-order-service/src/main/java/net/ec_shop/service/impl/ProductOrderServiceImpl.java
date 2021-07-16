@@ -65,6 +65,7 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     private RabbitMQConfig rabbitMQConfig;
 
     /**
+     * 确认订单信息
      * * 防重提交
      * * 用户微服务-确认收货地址
      * * 商品微服务-获取最新购物项和价格
@@ -84,17 +85,12 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     @Override
     public JsonData confirmOrder(ConfirmOrderRequest orderRequest) {
         LoginUser loginUser = LoginInterceptor.threadLocal.get();
-
         String orderOutTradeNo = CommonUtil.getStringNumRandom(32);
-
         //获取收货地址详情
         ProductOrderAddressVO addressVO = this.getUserAddress(orderRequest.getAddressId());
-
         log.info("收货地址信息:{}", addressVO);
-
-        //获取用户加入购物车的商品
+        //获取用户加入购物车的所有商品
         List<Long> productIdList = orderRequest.getProductIdList();
-
         JsonData cartItemDate = productFeignService.confirmOrderCartItem(productIdList);
         List<OrderItemVO> orderItemList = cartItemDate.getData(new TypeReference<>() {
         });
@@ -324,23 +320,19 @@ public class ProductOrderServiceImpl implements ProductOrderService {
     }
 
     /**
-     * 获取收货地址详情
+     * 根据地址id获取收货地址详情
      *
      * @param addressId
      * @return
      */
     private ProductOrderAddressVO getUserAddress(long addressId) {
-
         JsonData addressData = userFeignService.detail(addressId);
-
         if (addressData.getCode() != 0) {
             log.error("获取收获地址失败,msg:{}", addressData);
             throw new BizException(BizCodeEnum.ADDRESS_NO_EXITS);
         }
-
         ProductOrderAddressVO addressVO = addressData.getData(new TypeReference<>() {
         });
-
         return addressVO;
     }
 

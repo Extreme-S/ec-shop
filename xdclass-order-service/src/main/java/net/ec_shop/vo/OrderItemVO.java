@@ -12,7 +12,6 @@ public class OrderItemVO {
     @JsonProperty("product_id")
     private Long productId;
 
-
     /**
      * 购买数量
      */
@@ -41,7 +40,6 @@ public class OrderItemVO {
      */
     @JsonProperty("total_amount")
     private BigDecimal totalAmount;
-
 
     public Long getProductId() {
         return productId;
@@ -89,7 +87,6 @@ public class OrderItemVO {
      * @return
      */
     public BigDecimal getTotalAmount() {
-
         return this.amount.multiply(new BigDecimal(this.buyNum));
     }
 

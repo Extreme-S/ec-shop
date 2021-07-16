@@ -18,9 +18,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * <p>
  * 前端控制器
- * </p>
  *
  * @author 不爱吃鱼的猫丶
  * @since 2021-02-07
@@ -31,21 +29,25 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("/api/coupon/v1")
 public class CouponController {
 
-
     @Autowired
     private CouponService couponService;
 
     @Autowired
     private RedissonClient redissonClient;
 
-
+    /**
+     * 分页查询优惠券列表
+     *
+     * @param page
+     * @param size
+     * @return
+     */
     @ApiOperation("分页查询优惠券")
     @GetMapping("page_coupon")
     public JsonData pageCouponList(
             @ApiParam(value = "当前页") @RequestParam(value = "page", defaultValue = "1") int page,
             @ApiParam(value = "每页显示多少条") @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-
         Map<String, Object> pageMap = couponService.pageCouponActivity(page, size);
         return JsonData.buildSuccess(pageMap);
     }
@@ -61,7 +63,6 @@ public class CouponController {
     public JsonData addPromotionCoupon(
             @ApiParam(value = "优惠券id", required = true) @PathVariable("coupon_id") long couponId) {
         JsonData jsonData = couponService.addCoupon(couponId, CouponCategoryEnum.PROMOTION);
-
         return jsonData;
     }
 
@@ -73,9 +74,7 @@ public class CouponController {
     @ApiOperation("RPC-新用户注册接口")
     @PostMapping("/new_user_coupon")
     public JsonData addNewUserCoupon(@ApiParam("用户对象") @RequestBody NewUserCouponRequest newUserCouponRequest) {
-
         JsonData jsonData = couponService.initNewUserCoupon(newUserCouponRequest);
-
         return jsonData;
     }
 

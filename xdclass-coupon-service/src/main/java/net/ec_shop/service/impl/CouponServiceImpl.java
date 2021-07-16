@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouponServiceImpl implements CouponService {
 
-
     @Autowired
     private CouponMapper couponMapper;
 
@@ -89,7 +88,6 @@ public class CouponServiceImpl implements CouponService {
     @Override
     public JsonData addCoupon(long couponId, CouponCategoryEnum category) {
         LoginUser loginUser = LoginInterceptor.threadLocal.get();
-
         String lockKey = "lock:coupon:" + couponId;
         RLock rLock = redissonClient.getLock(lockKey);
 
@@ -101,12 +99,10 @@ public class CouponServiceImpl implements CouponService {
 
         log.info("领劵接口加锁成功:{}", Thread.currentThread().getId());
         try {
-
             CouponDO couponDO = couponMapper.selectOne(new QueryWrapper<CouponDO>()
                     .eq("id", couponId)
                     .eq("category", category.name()));
-
-            //优惠券是否可以领取
+            //检查优惠券是否可以领取
             this.checkCoupon(couponDO, loginUser.getId());
 
             //构建领劵记录
@@ -119,7 +115,7 @@ public class CouponServiceImpl implements CouponService {
             couponRecordDO.setCouponId(couponId);
             couponRecordDO.setId(null);
 
-            //扣减库存
+            //扣减该couponId的优惠券的库存
             int rows = couponMapper.reduceStock(couponId);
 
             if (rows == 1) {
@@ -134,7 +130,6 @@ public class CouponServiceImpl implements CouponService {
             log.info("解锁成功");
         }
         return JsonData.buildSuccess();
-
     }
 
     /**
@@ -159,7 +154,6 @@ public class CouponServiceImpl implements CouponService {
         for (CouponDO couponDO : couponDOList) {
             //幂等操作，调用需要加锁
             this.addCoupon(couponDO.getId(), CouponCategoryEnum.NEW_USER);
-
         }
 //        int i = 1 / 0;
         return JsonData.buildSuccess();

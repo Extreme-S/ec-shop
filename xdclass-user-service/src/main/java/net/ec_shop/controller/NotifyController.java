@@ -24,11 +24,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-
+@Slf4j
 @Api(tags = "通知模块")
 @RestController
 @RequestMapping("/api/user/v1")
-@Slf4j
 public class NotifyController {
 
     @Autowired
@@ -58,7 +57,7 @@ public class NotifyController {
         String captchaText = captchaProducer.createText();
         log.info("图形验证码:{}", captchaText);
 
-        //存储
+        //向redis中存储该用户的图形验证码的值，键根据ip+User-Agent进行md5加密后生成
         redisTemplate.opsForValue().set(getCaptchaKey(request), captchaText, CAPTCHA_CODE_EXPIRED, TimeUnit.MILLISECONDS);
 
         BufferedImage bufferedImage = captchaProducer.createImage(captchaText);
@@ -87,21 +86,19 @@ public class NotifyController {
     public JsonData sendRegisterCode(@RequestParam(value = "to", required = true) String to,
                                      @RequestParam(value = "captcha", required = true) String captcha,
                                      HttpServletRequest request) {
-
+        //获取该用户图形验证码的键值
         String key = getCaptchaKey(request);
         String cacheCaptcha = redisTemplate.opsForValue().get(key);
 
         //匹配图形验证码是否一样
-        if (captcha != null && cacheCaptcha != null && captcha.equalsIgnoreCase(cacheCaptcha)) {
+        if (captcha != null && captcha.equalsIgnoreCase(cacheCaptcha)) {
             //成功,删除缓存中的图形验证码，以免重复使用
             redisTemplate.delete(key);
             JsonData jsonData = notifyService.sendCode(SendCodeEnum.USER_REGISTER, to);
             return jsonData;
-
         } else {
             return JsonData.buildResult(BizCodeEnum.CODE_CAPTCHA_ERROR);
         }
-
     }
 
     /**
