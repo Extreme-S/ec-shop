@@ -26,7 +26,7 @@
 
 ​		电商平台中，为了拉取新用户的流量，对于新用户的注册会有新用户领取优惠券的活动，实际生产环境中，注册是一个比较复杂的业务流程，关系到分布式部署下图形验证码的验证过程，存储过程。用户账号的唯一性检查，邮箱或手机验证码的发送，不同微服务之间的交互，比如用户服务调用优惠券服务的领取新用户优惠券的功能等等。
 
-![img](E:\typora_img\wps1.jpg)
+![img](https://raw.githubusercontent.com/Extreme-S/img-bed/main/posts/wps1-1626585707925.jpg)
 
 <center>图 新用户注册发放优惠券时序图</center>
 
@@ -43,13 +43,13 @@
 优惠券限制1人限制1张，有些人却领了2张，利用暂停思维来发现问题，
 假设领券流程为先判断优惠券是否可领，然后扣减库存并添加领券记录，流程图如下
 
-![img](E:\typora_img\wps2.jpg)
+![img](https://raw.githubusercontent.com/Extreme-S/img-bed/main/posts/wps2-1626585696645.jpg)
 
 <center>图 一般优惠券领取流程</center>
 
 ​		在这种流程下，考虑同一用户的AB线程，A线程先判断可领优惠券，但是由于某种原因导致扣减库存的流程执行的很慢，这时候B线程进来判断优惠券是否可领，由于这时候A线程扣减库存并未执行，所以B线程查询数据库判断条件的结果和A线程一样，也可以领取优惠券，当A、B两个线程都执行完成后就会出现两个线程都领取优惠券成功的情况，即在1人限制领取1张优惠券的情况下领取了2张优惠券，流程图如下：
 
-![img](E:\typora_img\wps3.jpg)
+![img](https://raw.githubusercontent.com/Extreme-S/img-bed/main/posts/wps3-1626585725423.jpg)
 
 <center>图 单用户优惠券超领问题分析</center>
 
@@ -59,7 +59,7 @@
 
 ​		对于单用户超领优惠券问题，考虑引入redis分布式锁，在每次请求领取优惠券之前请求对该优惠券加上分布式锁，以独占的方式访问这个优惠券资源，如果上锁成功，那么执行接下来的业务逻辑，如果上锁失败，那么该线程会被阻塞并自旋等待。直到上一个线程释放这个优惠券的分布式锁才可以执行接下来的业务逻辑。完成业务流程如下图所示：
 
-![img](E:\typora_img\wps4.jpg)
+![img](https://raw.githubusercontent.com/Extreme-S/img-bed/main/posts/wps4-1626585732646.jpg)
 
 <center>图 引入分布式锁的单用户超领优惠券问题解决流程</center>
 
@@ -81,7 +81,7 @@
 
 2）订单不存在：下单、锁定库存后，程序问题导致订单异常回滚，定时扫描查询不到订单，则通过Task任务恢复商品库存
 
-![img](E:\typora_img\wps5.jpg)
+![img](https://raw.githubusercontent.com/Extreme-S/img-bed/main/posts/wps5-1626585737652.jpg)
 
 <center>图 商品微服务自管理模型</center>
 
@@ -97,6 +97,6 @@
 | FINISH                               | 完成           | 订单确认已支付，库存已扣减             |
 | CANCEL                               | 取消           | 订单超时未支付、取消、不存在，恢复库存 |
 
-![img](E:\typora_img\wps6.jpg)
+![image-20210718132340355](https://raw.githubusercontent.com/Extreme-S/img-bed/main/posts/image-20210718132340355.png)
 
 <center>图10 用户下单架构流程图</center>
